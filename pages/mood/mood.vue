@@ -50,6 +50,15 @@
 			</view>
 		</view>
 
+		<!-- 实时趋势折线图 -->
+		<view class="chart-section">
+			<text class="section-title">📈 环境实时趋势 (最近20条)</text>
+			<view id="trendChart" class="chart-container"></view>
+			<view class="chart-empty" v-if="historyData.length === 0">
+				<text>等候数据绘图中...</text>
+			</view>
+		</view>
+
 		<!-- 最近数据流 -->
 		<view class="stream-section">
 			<text class="section-title">📡 最近数据流</text>
@@ -74,6 +83,7 @@
 <script>
 	import mqttService from '@/utils/mqtt-service'
 	import mqttConfig from '@/utils/mqtt-config'
+	import * as echarts from 'echarts'
 
 	export default {
 		data() {
@@ -83,7 +93,9 @@
 				fosterData: {},
 				emotionData: {},
 				socialData: {},
-				streamList: []
+				streamList: [],
+				historyData: [], // 存储历史温湿度用于画图
+				chart: null // ECharts 实例
 			}
 		},
 
@@ -102,10 +114,29 @@
 			this.mqttStatus = mqttService.getStatus()
 			mqttService.onStatusChange(this.handleStatus)
 			this.subscribeTopics()
+			
+			// H5 环境下延迟初始化图表，确保 DOM 已挂载
+			this.$nextTick(() => {
+				setTimeout(() => {
+					this.initChart()
+				}, 300)
+			})
 		},
 
 		onHide() {
 			mqttService.offStatusChange(this.handleStatus)
+			if (this.pollTimer) {
+				clearInterval(this.pollTimer)
+				this.pollTimer = null
+			}
+			// 隐藏时不需要销毁，但如果需要释放内存可以 handle
+		},
+
+		beforeUnmount() {
+			if (this.chart) {
+				this.chart.dispose()
+				this.chart = null
+			}
 		},
 
 		methods: {
@@ -114,37 +145,126 @@
 			},
 
 			subscribeTopics() {
-				// 架构第三种场景：正确的硬件数据与网页数据分离。
-				// 你需要在阿里云云产品流转中，设置将物理硬件（DHT11等）的 /post 数据，
-				// 自动转发汇流到我们下面监听的自定义 Topic ( /user/get ) 中。
+				// 现在我们是全新的、完全独立的网页专属设备 WebApp001 了！
+				// 阿里云规则引擎会把 DHT11 上传来的一切数据，原封不动地转发到我们这个频道的 data.items 里。
 				
 				const customReceiveTopic = `/${mqttConfig.productKey}/${mqttConfig.deviceName}/user/get`;
 
 				mqttService.subscribe(customReceiveTopic, (data) => {
-					console.log('[App] 收到阿里云流转过来的物理数据: ', data);
+					console.log('[App] 收到阿里云转发的物理监控数据: ', data);
 					
-					// 假设你在阿里云规则引擎里，将数据的原始格式原样转发过来
-					// 数据结构通常带有 params，下面对各维度的数据做模拟和合并处理
-					if (data.params) {
-						// 1. 处理项圈心率等数据
-						if (data.params.heartRate !== undefined) {
-							this.collarData = { ...this.collarData, ...data.params };
-							this.addStream('❤️', '项圈数据更新', JSON.stringify(data.params));
+					// 根据阿里云规则引擎转发的结构，数据通常在 items 里
+					// 结构示例：items: { Temp1: { value: 23 }, Humi1: { value: 32 } }
+					const currentData = data.items || data.params || data;
+					
+					if (currentData) {
+						// 1. 处理项圈心率数据
+						const heartRateObj = currentData.heartRate;
+						const heartRateVal = (heartRateObj && typeof heartRateObj === 'object') ? heartRateObj.value : heartRateObj;
+						if (heartRateVal !== undefined) {
+							this.collarData = { ...this.collarData, heartRate: heartRateVal };
+							this.addStream('❤️', '项圈数据更新', `心率 ${heartRateVal}`);
 						}
-						// 2. 处理温湿度数据（DHT11上报的核心字段）
-						if (data.params.CurrentTemperature !== undefined || data.params.temperature !== undefined) {
-							this.fosterData = { ...this.fosterData, ...data.params };
-							this.addStream('🏠', '传感器环境更新', JSON.stringify(data.params));
+
+						// 2. 处理温湿度数据（核心：解析 .value 嵌套结构）
+						const t1 = currentData.Temp1;
+						const h1 = currentData.Humi1;
+						const tempVal = (t1 && typeof t1 === 'object') ? t1.value : t1;
+						const humiVal = (h1 && typeof h1 === 'object') ? h1.value : h1;
+
+						if (tempVal !== undefined || currentData.temperature !== undefined) {
+							this.fosterData = {
+								temperature: tempVal !== undefined ? tempVal : (currentData.temperature || this.fosterData.temperature),
+								humidity: humiVal !== undefined ? humiVal : (currentData.humidity || this.fosterData.humidity)
+							};
+							
+							this.addStream('🏠', '传感器环境更新', `温度 ${this.fosterData.temperature}℃ 湿度 ${this.fosterData.humidity}%`);
+							
+							// 添加到历史曲线数据
+							this.updateHistory(this.fosterData.temperature, this.fosterData.humidity)
 						}
+						
 						// 3. 处理情感分析结构
-						if (data.params.status !== undefined && data.params.emotion !== undefined) {
-							this.emotionData = { ...this.emotionData, ...data.params };
-							this.addStream('🧠', '情感状态变化', data.params.status || '');
+						const emotionObj = currentData.status || currentData.emotion;
+						const emotionVal = (emotionObj && typeof emotionObj === 'object') ? emotionObj.value : emotionObj;
+						if (emotionVal !== undefined) {
+							this.emotionData = { ...this.emotionData, status: emotionVal };
+							this.addStream('🧠', '情感状态变化', emotionVal);
 						}
 					}
-					
-					// 你也可以在阿里云规则引擎的 SQL 里，利用 SELECT a,b,c 拼凑出属于你的特殊格式
 				});
+			},
+
+			initChart() {
+				const chartDom = document.getElementById('trendChart');
+				if (!chartDom) return;
+				
+				this.chart = echarts.init(chartDom);
+				const option = {
+					tooltip: { trigger: 'axis' },
+					legend: { data: ['温度 (℃)', '湿度 (%)'], bottom: 0 },
+					grid: { left: '3%', right: '4%', bottom: '15%', top: '10%', containLabel: true },
+					xAxis: { 
+						type: 'category', 
+						data: [],
+						axisLabel: { fontSize: 10 }
+					},
+					yAxis: { type: 'value', scale: true },
+					series: [
+						{
+							name: '温度 (℃)',
+							type: 'line',
+							smooth: true,
+							data: [],
+							itemStyle: { color: '#007AFF' },
+							areaStyle: {
+								color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+									{ offset: 0, color: 'rgba(0,122,255,0.3)' },
+									{ offset: 1, color: 'rgba(0,122,255,0)' }
+								])
+							}
+						},
+						{
+							name: '湿度 (%)',
+							type: 'line',
+							smooth: true,
+							data: [],
+							itemStyle: { color: '#4CD964' },
+							areaStyle: {
+								color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+									{ offset: 0, color: 'rgba(76,217,100,0.3)' },
+									{ offset: 1, color: 'rgba(76,217,100,0)' }
+								])
+							}
+						}
+					]
+				};
+				this.chart.setOption(option);
+				
+				// 监听窗口大小变化
+				window.addEventListener('resize', () => {
+					this.chart && this.chart.resize();
+				});
+			},
+
+			updateHistory(temp, humi) {
+				const now = new Date();
+				const timeStr = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+				
+				this.historyData.push({ time: timeStr, temp, humi });
+				if (this.historyData.length > 20) {
+					this.historyData.shift();
+				}
+				
+				if (this.chart) {
+					this.chart.setOption({
+						xAxis: { data: this.historyData.map(d => d.time) },
+						series: [
+							{ data: this.historyData.map(d => d.temp) },
+							{ data: this.historyData.map(d => d.humi) }
+						]
+					});
+				}
 			},
 
 			addStream(icon, title, value) {

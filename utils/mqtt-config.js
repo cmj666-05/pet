@@ -16,8 +16,8 @@ export default {
 
 	// 设备三元组（动态签名模式，每次连接时实时生成 HMAC-SHA256）
 	productKey: 'k1wxakcs6OI',
-	deviceName: 'DHT11',
-	deviceSecret: 'bc073a07f86537380f76ddd44307b28d',
+	deviceName: 'webapp',
+	deviceSecret: '03a0edc6d46dd71a4eecd81ec95f5bd0',
 
 	// 预计算凭证已废弃（timestamp 有效期仅 15 分钟），改为动态签名
 	precomputed: null,
@@ -45,6 +45,10 @@ export default {
 
 		// NFC 社交 —— 社交事件上报
 		socialEvent: '/sys/${productKey}/${deviceName}/thing/event/social/post',
+
+		// 【重要】主动向云平台“拉取”设备的当前所有物模型数据（绕过不能 /post 的限制）
+		devicePropertyGet: '/sys/${productKey}/${deviceName}/thing/property/get',
+		devicePropertyGetReply: '/sys/${productKey}/${deviceName}/thing/property/get_reply'
 	},
 
 	/**
