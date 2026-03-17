@@ -114,49 +114,37 @@
 			},
 
 			subscribeTopics() {
-				// 订阅项圈属性上报
-				mqttService.subscribe(
-					mqttConfig.topics.collarPropertyPost,
-					(data) => {
-						if (data.params) {
-							this.collarData = { ...this.collarData, ...data.params }
-							this.addStream('❤️', '项圈数据更新', JSON.stringify(data.params))
-						}
-					}
-				)
+				// 架构第三种场景：正确的硬件数据与网页数据分离。
+				// 你需要在阿里云云产品流转中，设置将物理硬件（DHT11等）的 /post 数据，
+				// 自动转发汇流到我们下面监听的自定义 Topic ( /user/get ) 中。
+				
+				const customReceiveTopic = `/${mqttConfig.productKey}/${mqttConfig.deviceName}/user/get`;
 
-				// 订阅寄养屋属性上报
-				mqttService.subscribe(
-					mqttConfig.topics.fosterPropertyPost,
-					(data) => {
-						if (data.params) {
-							this.fosterData = { ...this.fosterData, ...data.params }
-							this.addStream('🏠', '寄养屋数据更新', JSON.stringify(data.params))
+				mqttService.subscribe(customReceiveTopic, (data) => {
+					console.log('[App] 收到阿里云流转过来的物理数据: ', data);
+					
+					// 假设你在阿里云规则引擎里，将数据的原始格式原样转发过来
+					// 数据结构通常带有 params，下面对各维度的数据做模拟和合并处理
+					if (data.params) {
+						// 1. 处理项圈心率等数据
+						if (data.params.heartRate !== undefined) {
+							this.collarData = { ...this.collarData, ...data.params };
+							this.addStream('❤️', '项圈数据更新', JSON.stringify(data.params));
+						}
+						// 2. 处理温湿度数据（DHT11上报的核心字段）
+						if (data.params.CurrentTemperature !== undefined || data.params.temperature !== undefined) {
+							this.fosterData = { ...this.fosterData, ...data.params };
+							this.addStream('🏠', '传感器环境更新', JSON.stringify(data.params));
+						}
+						// 3. 处理情感分析结构
+						if (data.params.status !== undefined && data.params.emotion !== undefined) {
+							this.emotionData = { ...this.emotionData, ...data.params };
+							this.addStream('🧠', '情感状态变化', data.params.status || '');
 						}
 					}
-				)
-
-				// 订阅情感事件
-				mqttService.subscribe(
-					mqttConfig.topics.emotionEvent,
-					(data) => {
-						if (data.params) {
-							this.emotionData = { ...this.emotionData, ...data.params }
-							this.addStream('🧠', '情感状态变化', data.params.status || '')
-						}
-					}
-				)
-
-				// 订阅社交事件
-				mqttService.subscribe(
-					mqttConfig.topics.socialEvent,
-					(data) => {
-						if (data.params) {
-							this.socialData = { ...this.socialData, ...data.params }
-							this.addStream('📱', 'NFC 社交互动', data.params.peerName || '')
-						}
-					}
-				)
+					
+					// 你也可以在阿里云规则引擎的 SQL 里，利用 SELECT a,b,c 拼凑出属于你的特殊格式
+				});
 			},
 
 			addStream(icon, title, value) {

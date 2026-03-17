@@ -2,21 +2,25 @@
  * 阿里云 IoT MQTT 连接配置
  *
  * MQTT 公网接入点：iot-06z00b1eo2alugk.mqtt.iothub.aliyuncs.com
- * 协议：WSS (WebSocket Secure)
- * 端口：443
+ * 协议：WSS (WebSocket Secure) — uni-app 环境需使用 WebSocket
+ * 端口：443 (WSS) / 1883 (TCP，仅限原生 MQTT 客户端)
  *
- * ⚠️ 请将下方 ProductKey / DeviceName / DeviceSecret 替换为你在阿里云 IoT 控制台创建的真实设备信息
+ * 设备：DHT11 (产品: k1wxakcs6OI)
  */
 
 export default {
 	// MQTT 接入点（公网）
 	host: 'iot-06z00b1eo2alugk.mqtt.iothub.aliyuncs.com',
-	port: 443,
+	port: 443,        // WSS 端口，uni-app 环境使用
+	tcpPort: 1883,    // TCP 端口，原生 MQTT 客户端使用
 
-	// 设备三元组 —— 请替换为真实值
-	productKey: 'YOUR_PRODUCT_KEY',
-	deviceName: 'YOUR_DEVICE_NAME',
-	deviceSecret: 'YOUR_DEVICE_SECRET',
+	// 设备三元组（动态签名模式，每次连接时实时生成 HMAC-SHA256）
+	productKey: 'k1wxakcs6OI',
+	deviceName: 'DHT11',
+	deviceSecret: 'bc073a07f86537380f76ddd44307b28d',
+
+	// 预计算凭证已废弃（timestamp 有效期仅 15 分钟），改为动态签名
+	precomputed: null,
 
 	// 连接选项
 	options: {
