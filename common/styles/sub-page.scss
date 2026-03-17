@@ -1,0 +1,112 @@
+/**
+ * 子页面通用样式
+ * 所有非 Tab 子页面共用的基础样式（蓝色主题）
+ */
+
+@import '@/common/styles/variables.scss';
+@import '@/common/styles/mixins.scss';
+
+/* 子页面容器 */
+.sub-page {
+	@include page-container;
+}
+
+/* 子页面顶部横幅 */
+.sub-banner {
+	background: $gradient-primary;
+	border-radius: $radius-xl;
+	padding: $spacing-3xl;
+	margin-bottom: $spacing-3xl;
+	@include flex-column-center;
+	box-shadow: $shadow-primary;
+}
+
+.sub-banner-icon {
+	font-size: 72rpx;
+	margin-bottom: $spacing-base;
+}
+
+.sub-banner-title {
+	font-size: $font-size-3xl;
+	font-weight: $font-weight-bold;
+	color: #FFFFFF;
+	margin-bottom: $spacing-xs;
+}
+
+.sub-banner-desc {
+	font-size: $font-size-base;
+	color: rgba(255, 255, 255, 0.85);
+}
+
+/* 功能区块 */
+.sub-section {
+	margin-bottom: $spacing-3xl;
+}
+
+.sub-section-title {
+	font-size: $font-size-xl;
+	font-weight: $font-weight-semibold;
+	color: $color-text-primary;
+	margin-bottom: $spacing-lg;
+	display: block;
+}
+
+/* 通用操作按钮 */
+.sub-action-btn {
+	background: $gradient-primary;
+	border-radius: $radius-round;
+	padding: $spacing-md + 8rpx;
+	@include flex-center;
+	box-shadow: $shadow-primary;
+	transition: $transition-base;
+	margin-bottom: $spacing-3xl;
+
+	&:active {
+		transform: scale(0.97);
+	}
+
+	.btn-text {
+		font-size: $font-size-lg;
+		font-weight: $font-weight-semibold;
+		color: #FFFFFF;
+		letter-spacing: 2rpx;
+	}
+}
+
+/* 实时数据指标卡片 */
+.metric-grid {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
+
+.metric-card {
+	width: 48%;
+	@include card($radius-lg, $shadow-base);
+	padding: $spacing-xl;
+	margin-bottom: $spacing-lg;
+	@include flex-column;
+}
+
+.metric-icon {
+	font-size: 40rpx;
+	margin-bottom: $spacing-sm;
+}
+
+.metric-label {
+	font-size: $font-size-sm;
+	color: $color-text-placeholder;
+	margin-bottom: $spacing-xs;
+}
+
+.metric-value {
+	font-size: $font-size-2xl;
+	font-weight: $font-weight-bold;
+	color: $color-text-primary;
+}
+
+.metric-unit {
+	font-size: $font-size-sm;
+	color: $color-text-secondary;
+	font-weight: $font-weight-normal;
+}

@@ -1,0 +1,177 @@
+/**
+ * 我的页样式 - pages/mine（蓝色主题）
+ */
+
+@import '@/common/styles/variables.scss';
+@import '@/common/styles/mixins.scss';
+
+/* 页面容器 - 顶部蓝色渐变 */
+.page {
+	min-height: 100vh;
+	background: linear-gradient(
+		180deg,
+		$color-primary 0%,
+		$color-primary-light 30%,
+		$color-bg-page 30%,
+		$color-bg-page 100%
+	);
+	padding-bottom: $page-padding-bottom;
+}
+
+/* ========================
+   用户资料区
+   ======================== */
+.profile-section {
+	padding: $spacing-5xl $page-padding $spacing-3xl;
+}
+
+.profile-card {
+	@include card($radius-xl, $shadow-lg);
+	padding: $spacing-4xl $spacing-3xl $spacing-3xl;
+	@include flex-column-center;
+	position: relative;
+}
+
+/* 头像 */
+.avatar-wrapper {
+	position: relative;
+	margin-bottom: $spacing-md;
+}
+
+.avatar {
+	width: 140rpx;
+	height: 140rpx;
+	border-radius: 70rpx;
+	background: linear-gradient(135deg, $color-primary-bg 0%, $color-primary-lighter 100%);
+	@include flex-center;
+	border: 6rpx solid #FFFFFF;
+	box-shadow: 0 8rpx 24rpx rgba(14, 165, 233, 0.2);
+}
+
+.avatar-text {
+	font-size: 72rpx;
+}
+
+/* 等级徽章 */
+.avatar-badge {
+	position: absolute;
+	bottom: -4rpx;
+	right: -8rpx;
+	background: $gradient-gold;
+	border-radius: $radius-md;
+	padding: 4rpx $spacing-base;
+	border: 4rpx solid #FFFFFF;
+}
+
+.badge-text {
+	font-size: $font-size-xs;
+	color: #FFFFFF;
+	font-weight: $font-weight-bold;
+}
+
+/* 用户信息 */
+.user-name {
+	font-size: $font-size-2xl;
+	font-weight: $font-weight-bold;
+	color: $color-text-primary;
+	margin-bottom: $spacing-xs;
+}
+
+.user-desc {
+	font-size: $font-size-sm + 2rpx;
+	color: $color-text-placeholder;
+	margin-bottom: $spacing-2xl;
+}
+
+/* 统计行 */
+.stats-row {
+	display: flex;
+	width: 100%;
+	justify-content: space-around;
+	align-items: center;
+	padding-top: $spacing-xl;
+	border-top: 1rpx solid $color-border-light;
+}
+
+.stat-item {
+	@include flex-column-center;
+}
+
+.stat-num {
+	font-size: $font-size-2xl;
+	font-weight: $font-weight-bold;
+	color: $color-primary;
+	margin-bottom: $spacing-xs;
+}
+
+.stat-label {
+	font-size: $font-size-sm;
+	color: $color-text-placeholder;
+}
+
+.stat-divider {
+	@include divider-vertical(50rpx);
+}
+
+/* ========================
+   菜单区
+   ======================== */
+.menu-section {
+	padding: 0 $page-padding;
+}
+
+.menu-group {
+	@include card($radius-lg, $shadow-sm);
+	margin-bottom: $spacing-lg;
+	overflow: hidden;
+}
+
+.menu-item {
+	@include flex-between;
+	padding: $spacing-xl + 2rpx $spacing-xl;
+	border-bottom: 1rpx solid $color-bg-hover;
+	transition: background 0.2s ease;
+
+	&:last-child {
+		border-bottom: none;
+	}
+
+	&:active {
+		background: $color-bg-hover;
+	}
+}
+
+.menu-left {
+	display: flex;
+	align-items: center;
+}
+
+.menu-icon {
+	font-size: $font-size-2xl;
+	margin-right: $spacing-md;
+}
+
+.menu-text {
+	font-size: $font-size-md;
+	color: $color-text-regular;
+	font-weight: $font-weight-medium;
+}
+
+.menu-arrow {
+	font-size: $font-size-2xl;
+	color: $color-text-disabled;
+	font-weight: 300;
+}
+
+/* ========================
+   版本号
+   ======================== */
+.version-section {
+	@include flex-center;
+	padding: $spacing-3xl;
+}
+
+.version-text {
+	font-size: $font-size-sm;
+	color: $color-text-disabled;
+}

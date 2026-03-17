@@ -1,0 +1,87 @@
+/**
+ * MoodPaws 通用 Mixin
+ * 可复用的样式片段
+ */
+
+@import './variables.scss';
+
+/* 弹性布局 - 居中 */
+@mixin flex-center {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+/* 弹性布局 - 列方向 */
+@mixin flex-column {
+	display: flex;
+	flex-direction: column;
+}
+
+/* 弹性布局 - 列方向居中 */
+@mixin flex-column-center {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+/* 弹性布局 - 两端对齐 */
+@mixin flex-between {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+/* 白色卡片 */
+@mixin card($radius: $radius-lg, $shadow: $shadow-md) {
+	background: $color-bg-card;
+	border-radius: $radius;
+	box-shadow: $shadow;
+}
+
+/* 页面容器 */
+@mixin page-container($bg: $gradient-page) {
+	min-height: 100vh;
+	background: $bg;
+	padding: $page-padding;
+	padding-bottom: $page-padding-bottom;
+}
+
+/* 点击缩放反馈 */
+@mixin press-feedback($scale: 0.96) {
+	transition: $transition-base;
+
+	&:active {
+		transform: scale($scale);
+		opacity: 0.9;
+	}
+}
+
+/* 文字截断 - 单行 */
+@mixin text-ellipsis {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+/* 文字截断 - 多行 */
+@mixin text-ellipsis-multi($lines: 2) {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-line-clamp: $lines;
+	-webkit-box-orient: vertical;
+}
+
+/* 分割线 */
+@mixin divider-vertical($height: 60rpx) {
+	width: 1rpx;
+	height: $height;
+	background: $color-border;
+}
+
+@mixin divider-horizontal {
+	width: 100%;
+	height: 1rpx;
+	background: $color-border-light;
+}

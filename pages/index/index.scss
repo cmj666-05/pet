@@ -1,0 +1,140 @@
+/**
+ * 首页样式 - pages/index（蓝色主题）
+ */
+
+@import '@/common/styles/variables.scss';
+@import '@/common/styles/mixins.scss';
+
+/* 页面容器 */
+.page {
+	@include page-container;
+}
+
+/* ========================
+   欢迎区域
+   ======================== */
+.welcome-section {
+	margin-bottom: $spacing-3xl;
+}
+
+.welcome-card {
+	background: $gradient-primary-full;
+	border-radius: $radius-xl;
+	padding: $spacing-5xl $spacing-3xl;
+	@include flex-column-center;
+	box-shadow: $shadow-primary-lg;
+}
+
+.paw-icon {
+	font-size: 80rpx;
+	margin-bottom: $spacing-md;
+}
+
+.welcome-title {
+	font-size: $font-size-3xl;
+	font-weight: $font-weight-bold;
+	color: #FFFFFF;
+	margin-bottom: $spacing-sm;
+	letter-spacing: 2rpx;
+}
+
+.welcome-desc {
+	font-size: $font-size-base;
+	color: rgba(255, 255, 255, 0.85);
+}
+
+/* ========================
+   功能卡片网格
+   ======================== */
+.feature-grid {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	margin-bottom: $spacing-3xl;
+}
+
+.feature-card {
+	width: 48%;
+	border-radius: $radius-lg;
+	padding: $spacing-2xl $spacing-xl;
+	margin-bottom: $spacing-lg;
+	@include flex-column;
+	box-shadow: $shadow-md;
+	@include press-feedback;
+}
+
+.card-collar {
+	background: linear-gradient(135deg, #E0F2FE 0%, #BAE6FD 100%);
+}
+
+.card-foster {
+	background: linear-gradient(135deg, #ECFDF5 0%, #A7F3D0 100%);
+}
+
+.card-emotion {
+	background: linear-gradient(135deg, #EDE9FE 0%, #C4B5FD 100%);
+}
+
+.card-social {
+	background: linear-gradient(135deg, #FFF7ED 0%, #FED7AA 100%);
+}
+
+.card-icon {
+	font-size: 56rpx;
+	margin-bottom: $spacing-base;
+}
+
+.card-title {
+	font-size: $font-size-lg;
+	font-weight: $font-weight-semibold;
+	color: $color-text-primary;
+	margin-bottom: $spacing-xs;
+}
+
+.card-desc {
+	font-size: $font-size-sm;
+	color: $color-text-secondary;
+}
+
+/* ========================
+   设备状态概览
+   ======================== */
+.status-section {
+	margin-bottom: $spacing-xl;
+}
+
+.status-card {
+	@include card($radius-lg, $shadow-md);
+	padding: $spacing-2xl;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+}
+
+.status-item {
+	@include flex-column-center;
+}
+
+.status-label {
+	font-size: $font-size-sm + 2rpx;
+	color: $color-text-placeholder;
+	margin-bottom: $spacing-sm;
+}
+
+.status-value {
+	font-size: $font-size-md;
+	font-weight: $font-weight-semibold;
+	color: $color-text-regular;
+}
+
+.status-value.online {
+	color: $color-success;
+}
+
+.status-value.offline {
+	color: $color-danger;
+}
+
+.status-divider {
+	@include divider-vertical;
+}

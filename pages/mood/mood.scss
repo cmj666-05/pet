@@ -1,0 +1,129 @@
+/**
+ * 数据总览页样式 - pages/mood（蓝色主题）
+ * 原心情页改为设备数据总览
+ */
+
+@import '@/common/styles/variables.scss';
+@import '@/common/styles/mixins.scss';
+
+/* 页面容器 */
+.page {
+	@include page-container;
+}
+
+/* ========================
+   MQTT 连接状态栏
+   ======================== */
+.connection-bar {
+	@include flex-between;
+	padding: $spacing-base $spacing-md;
+	background: $color-bg-card;
+	border-radius: $radius-lg;
+	margin-bottom: $spacing-lg;
+	box-shadow: $shadow-sm;
+}
+
+.connection-label {
+	font-size: $font-size-sm;
+	color: $color-text-secondary;
+}
+
+/* ========================
+   设备数据概览网格
+   ======================== */
+.overview-grid {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	margin-bottom: $spacing-3xl;
+}
+
+.overview-card {
+	width: 48%;
+	@include card($radius-lg, $shadow-base);
+	padding: $spacing-xl;
+	margin-bottom: $spacing-lg;
+	@include flex-column;
+	border-left: 6rpx solid transparent;
+}
+
+.overview-card.collar {
+	border-left-color: $color-primary;
+}
+
+.overview-card.foster {
+	border-left-color: $color-success;
+}
+
+.overview-card.emotion {
+	border-left-color: $color-info;
+}
+
+.overview-card.social {
+	border-left-color: $color-warning;
+}
+
+.overview-title {
+	font-size: $font-size-sm;
+	color: $color-text-placeholder;
+	margin-bottom: $spacing-sm;
+}
+
+.overview-value {
+	font-size: $font-size-2xl;
+	font-weight: $font-weight-bold;
+	color: $color-text-primary;
+	margin-bottom: $spacing-xs;
+}
+
+.overview-desc {
+	font-size: $font-size-xs;
+	color: $color-text-secondary;
+}
+
+/* ========================
+   最近数据流
+   ======================== */
+.stream-section {
+	margin-bottom: $spacing-xl;
+}
+
+.stream-list {
+	@include flex-column;
+}
+
+.stream-item {
+	@include card($radius-md, $shadow-sm);
+	padding: $spacing-md + 8rpx;
+	margin-bottom: $spacing-base;
+	display: flex;
+	align-items: center;
+}
+
+.stream-icon {
+	font-size: 40rpx;
+	margin-right: $spacing-md;
+}
+
+.stream-info {
+	flex: 1;
+	@include flex-column;
+}
+
+.stream-title {
+	font-size: $font-size-md;
+	font-weight: $font-weight-medium;
+	color: $color-text-primary;
+	margin-bottom: 4rpx;
+}
+
+.stream-time {
+	font-size: $font-size-xs;
+	color: $color-text-placeholder;
+}
+
+.stream-value {
+	font-size: $font-size-md;
+	font-weight: $font-weight-semibold;
+	color: $color-primary;
+}

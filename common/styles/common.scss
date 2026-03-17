@@ -1,0 +1,130 @@
+/**
+ * MoodPaws 公共样式
+ * 多页面复用的通用样式类
+ */
+
+@import './variables.scss';
+@import './mixins.scss';
+
+/* ========================
+   通用区块标题
+   ======================== */
+.section-title {
+	font-size: $font-size-xl;
+	font-weight: $font-weight-semibold;
+	color: $color-text-primary;
+	margin-bottom: $spacing-lg;
+	display: block;
+}
+
+/* ========================
+   空状态
+   ======================== */
+.empty-state {
+	@include flex-column-center;
+	padding: $spacing-5xl;
+
+	.empty-icon {
+		font-size: 72rpx;
+		margin-bottom: $spacing-md;
+	}
+
+	.empty-text {
+		font-size: $font-size-base;
+		color: $color-text-placeholder;
+	}
+}
+
+/* ========================
+   数据卡片通用样式
+   ======================== */
+.data-card {
+	@include card($radius-lg, $shadow-base);
+	padding: $spacing-xl;
+	margin-bottom: $spacing-lg;
+}
+
+.data-card-header {
+	@include flex-between;
+	margin-bottom: $spacing-md;
+}
+
+.data-card-title {
+	font-size: $font-size-md;
+	font-weight: $font-weight-semibold;
+	color: $color-text-primary;
+}
+
+/* ========================
+   状态标签
+   ======================== */
+.status-tag {
+	font-size: $font-size-xs;
+	padding: 4rpx 16rpx;
+	border-radius: $radius-md;
+	font-weight: $font-weight-medium;
+
+	&.tag-normal {
+		color: $color-success;
+		background: rgba(16, 185, 129, 0.1);
+	}
+
+	&.tag-warning {
+		color: $color-warning;
+		background: rgba(245, 158, 11, 0.1);
+	}
+
+	&.tag-danger {
+		color: $color-danger;
+		background: rgba(239, 68, 68, 0.1);
+	}
+
+	&.tag-info {
+		color: $color-primary;
+		background: rgba(14, 165, 233, 0.1);
+	}
+}
+
+/* ========================
+   连接状态指示器
+   ======================== */
+.connection-status {
+	@include flex-center;
+	padding: 6rpx 20rpx;
+	border-radius: $radius-round;
+	font-size: $font-size-xs;
+
+	.status-dot {
+		width: 12rpx;
+		height: 12rpx;
+		border-radius: $radius-circle;
+		margin-right: $spacing-xs;
+	}
+
+	&.connected {
+		background: rgba(16, 185, 129, 0.1);
+		color: $color-success;
+
+		.status-dot {
+			background: $color-success;
+		}
+	}
+
+	&.disconnected {
+		background: rgba(239, 68, 68, 0.1);
+		color: $color-danger;
+
+		.status-dot {
+			background: $color-danger;
+		}
+	}
+
+	&.connecting {
+		background: rgba(245, 158, 11, 0.1);
+		color: $color-warning;
+
+		.status-dot {
+			background: $color-warning;
+		}
+	}
+}
